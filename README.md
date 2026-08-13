@@ -24,4 +24,43 @@ npm install
 ### Run in development
 
 ```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000).
+
+### Build for production
+
+```bash
+npm run build
+```
+
+### Start the production server
+
+```bash
+npm run start
+```
+
+## Project Structure
+
+```
+src/
+├── app/
+│   ├── layout.tsx          # Root layout with fonts, metadata
+│   ├── page.tsx            # Homepage
+│   ├── globals.css         # Design system + global styles
+│   ├── loading.tsx         # Route loading state
+│   ├── error.tsx           # Route error boundary
+│   ├── not-found.tsx       # 404 page
+│   ├── sitemap.ts          # SEO sitemap
+│   ├── robots.ts           # robots.txt
+│   ├── about/page.tsx      # About page
+│   ├── contact/page.tsx    # Contact page
+│   ├── work/page.tsx       # All work page
+│   └── work/[slug]/page.tsx # Dynamic case study routes
+├── components/
+│   ├── audio/              # SoundProvider, SoundToggle
+│   ├── cursor/             # CustomCursor
+│   ├── hero/               # Hero, StackVisual
+│   ├── layout/             # Preloader, SmoothScroll
 | `--accent2` | `#3adca6` |
