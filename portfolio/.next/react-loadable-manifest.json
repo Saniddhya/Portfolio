@@ -1,0 +1,22 @@
+{
+  "..\\node_modules\\next\\dist\\client\\index.js -> ../pages/_app": {
+    "id": 5139,
+    "files": [
+      "static/chunks/139.7a5a8e93a21948c1.js"
+    ]
+  },
+  "..\\node_modules\\next\\dist\\client\\index.js -> ../pages/_error": {
+    "id": 1646,
+    "files": [
+      "static/chunks/646.f342b7cffc01feb0.js"
+    ]
+  },
+  "app\\provider.tsx -> @/components/background/MotionBackground": {
+    "id": 3823,
+    "files": [
+      "static/chunks/998-432c538af1b91f0b.js",
+      "static/chunks/15.22ba18dad3ff4536.js",
+      "static/chunks/823.c8b2e7c0a7a6e39b.js"
+    ]
+  }
+}
