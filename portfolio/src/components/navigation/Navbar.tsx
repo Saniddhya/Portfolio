@@ -1,153 +1,207 @@
 "use client";
 
-import Link from "next/link";
-import { useEffect, useState, type MouseEvent } from "react";
-import { usePathname } from "next/navigation";
-import { SoundToggle } from "@/components/audio/SoundToggle";
-import { useSoundContext } from "@/components/audio/SoundProvider";
-import { useMagnetic } from "@/hooks/useMagnetic";
-import { scrollToId } from "@/lib/lenis";
-import MobileMenu from "./MobileMenu";
-import { cn } from "@/lib/utils";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { navSections } from "@/data/profile";
 
-const NAV_LINKS = [
-  { label: "About", href: "/#about" },
-  { label: "Work", href: "/#work" },
-  { label: "Skills", href: "/#skills" },
-  { label: "Experience", href: "/#experience" },
-  { label: "Contact", href: "/#contact" },
-];
-
+/** Sticky nav: scroll progress hairline, active section, focus-trapped overlay. */
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState("hero");
-  const pathname = usePathname();
-  const { playClick, playHover } = useSoundContext();
-  const logoRef = useMagnetic<HTMLAnchorElement>(0.2);
+  const [progress, setProgress] = useState(0);
+  const [active, setActive] = useState<string>("");
+  const [menuOpen, setMenuOpen] = useState(false);
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const toggleRef = useRef<HTMLButtonElement>(null);
 
+  // Batched into one rAF so scrolling never re-renders per pixel.
   useEffect(() => {
+    let frame = 0;
     const onScroll = () => {
-      setScrolled(window.scrollY > 50);
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        const y = window.scrollY;
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        setScrolled(y > 24);
+        setProgress(max > 0 ? Math.min(1, y / max) : 0);
+      });
     };
+
+    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (frame) cancelAnimationFrame(frame);
+    };
   }, []);
 
+  // Active section via IntersectionObserver — no scroll maths, no jank.
   useEffect(() => {
-    if (pathname !== "/") return;
-    const sections = Array.from(document.querySelectorAll<HTMLElement>("[data-section]"));
+    const sections = navSections
+      .map((s) => document.getElementById(s.id))
+      .filter((el): el is HTMLElement => el !== null);
+
     const observer = new IntersectionObserver(
       (entries) => {
-        const current = entries
-          .filter((entry) => entry.isIntersecting)
+        const visible = entries
+          .filter((e) => e.isIntersecting)
           .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        const id = current?.target.id;
-        if (id) setActiveSection(id);
+        if (visible) setActive(visible.target.id);
       },
-      { rootMargin: "-20% 0px -65% 0px", threshold: [0.1, 0.4, 0.7] },
+      { rootMargin: "-45% 0px -45% 0px", threshold: [0, 0.2, 0.6] },
     );
-    sections.forEach((section) => observer.observe(section));
+
+    sections.forEach((s) => observer.observe(s));
     return () => observer.disconnect();
-  }, [pathname]);
+  }, []);
 
-  const handleNavClick = (event: MouseEvent<HTMLAnchorElement>, label: string) => {
-    playClick();
+  // Close on Escape, restore focus, lock scroll while the overlay is open.
+  useEffect(() => {
+    if (!menuOpen) return;
 
-    // If on home page, smooth scroll to section
-    if (pathname === "/") {
-      const href =
-        NAV_LINKS.find((l) => l.label === label)?.href ?? "";
-      if (href.includes("#")) {
-        event.preventDefault();
-        scrollToId(href.split("#")[1]);
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setMenuOpen(false);
+        toggleRef.current?.focus();
       }
-    }
-    setMobileOpen(false);
-  };
+    };
+
+    document.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    overlayRef.current?.querySelector<HTMLAnchorElement>("a")?.focus();
+
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [menuOpen]);
+
+  const go = useCallback((id: string) => {
+    setMenuOpen(false);
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, []);
 
   return (
     <>
       <header
-        className={cn(
-          "fixed top-0 left-0 right-0 z-[1000] transition-all duration-300 border-b",
-          scrolled
-            ? "backdrop-blur-md border-b border-line"
-            : "border-b border-transparent",
-        )}
-        style={{ background: scrolled ? "rgba(8,6,7,0.82)" : "transparent" }}
+        className={`no-print fixed inset-x-0 top-0 z-50 transition-colors duration-500 ${
+          scrolled ? "border-b border-line bg-bg/80 backdrop-blur-xl" : "border-b border-transparent"
+        }`}
       >
-        <nav
-          className="container flex items-center justify-between py-4"
-          aria-label="Main navigation"
-        >
-          <Link
-            ref={logoRef}
-            href="/"
-            className="font-display font-bold text-lg tracking-tight text-fg hover:text-accent transition-colors"
-            onClick={() => {
-              playClick();
-              setMobileOpen(false);
+        <nav className="container flex h-16 items-center justify-between" aria-label="Primary">
+          <a
+            href="#top"
+            onClick={(e) => {
+              e.preventDefault();
+              window.scrollTo({ top: 0, behavior: "smooth" });
             }}
-            onMouseEnter={playHover}
+            className="mono text-[12px] tracking-[0.2em] text-fg"
           >
-            SANIDHYA<span className="glow-text">.DEV</span>
-          </Link>
+            SANIDHYA.DEV
+          </a>
 
-          <div className="hidden md:flex items-center gap-8">
-            <ul className="flex items-center gap-8">
-              {NAV_LINKS.map((link) => (
-                <li key={link.label}>
-                  <Link
-                    href={link.href}
-                    className="nav-link"
-                    onClick={(event) => handleNavClick(event, link.label)}
-                    onMouseEnter={playHover}
-                    aria-current={activeSection === link.href.split("#")[1] ? "page" : undefined}
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-            <SoundToggle />
-          </div>
+          <ul className="hidden items-center gap-7 lg:flex">
+            {navSections.map((section) => (
+              <li key={section.id}>
+                <a
+                  href={`#${section.id}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    go(section.id);
+                  }}
+                  aria-current={active === section.id ? "true" : undefined}
+                  className={`mono flex items-baseline gap-1.5 text-[11px] transition-colors duration-300 ${
+                    active === section.id ? "text-fg" : "text-muted-2 hover:text-fg"
+                  }`}
+                >
+                  <span className="text-accent/70">{section.index}</span>
+                  {section.label}
+                </a>
+              </li>
+            ))}
+          </ul>
 
-          {/* Mobile hamburger */}
-          <div className="flex md:hidden items-center gap-4">
-            <SoundToggle />
-            <button
-              type="button"
-              className="relative w-10 h-10 flex flex-col items-center justify-center gap-1.5 cursor-pointer bg-transparent border-none"
-              onClick={() => setMobileOpen(!mobileOpen)}
-              aria-label={mobileOpen ? "Close menu" : "Open menu"}
-              aria-expanded={mobileOpen}
-              aria-controls="mobile-menu"
+          <div className="flex items-center gap-3">
+            <a
+              href="https://github.com/saniddhya"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn hidden !px-4 !py-2 sm:inline-flex"
             >
-              <span
-                className={cn(
-                  "block w-6 h-0.5 bg-fg transition-all duration-300",
-                  mobileOpen && "rotate-45 translate-y-2",
-                )}
-              />
-              <span
-                className={cn(
-                  "block w-6 h-0.5 bg-fg transition-all duration-300",
-                  mobileOpen && "opacity-0",
-                )}
-              />
-              <span
-                className={cn(
-                  "block w-6 h-0.5 bg-fg transition-all duration-300",
-                  mobileOpen && "-rotate-45 -translate-y-2",
-                )}
-              />
+              GitHub
+              <span className="btn-arrow" aria-hidden="true">
+                ↗
+              </span>
+              <span className="sr-only">(opens in a new tab)</span>
+            </a>
+
+            <button
+              ref={toggleRef}
+              type="button"
+              onClick={() => setMenuOpen((v) => !v)}
+              aria-expanded={menuOpen}
+              aria-controls="mobile-menu"
+              className="mono flex h-10 w-10 items-center justify-center rounded-full border border-line text-fg lg:hidden"
+            >
+              <span className="sr-only">{menuOpen ? "Close menu" : "Open menu"}</span>
+              <span aria-hidden="true" className="flex flex-col gap-1">
+                <span
+                  className={`block h-px w-4 bg-current transition-transform duration-300 ${
+                    menuOpen ? "translate-y-[2.5px] rotate-45" : ""
+                  }`}
+                />
+                <span
+                  className={`block h-px w-4 bg-current transition-transform duration-300 ${
+                    menuOpen ? "-translate-y-[2.5px] -rotate-45" : ""
+                  }`}
+                />
+              </span>
             </button>
           </div>
         </nav>
-      </header>
 
-      <MobileMenu open={mobileOpen} onClose={() => setMobileOpen(false)} />
+        <div className="h-px w-full bg-line/60" aria-hidden="true">
+          <div
+            className="h-px bg-accent transition-[width] duration-150 ease-out"
+            style={{ width: `${progress * 100}%` }}
+          />
+        </div>
+      </header>
+      {menuOpen && (
+        <div
+          ref={overlayRef}
+          id="mobile-menu"
+          className="fixed inset-0 z-40 flex flex-col justify-between bg-bg px-6 pb-10 pt-24 lg:hidden"
+        >
+          <nav aria-label="Mobile">
+            <ul className="flex flex-col">
+              {navSections.map((section) => (
+                <li key={section.id} className="border-b border-line">
+                  <a
+                    href={`#${section.id}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      go(section.id);
+                    }}
+                    className="flex items-baseline gap-4 py-5"
+                  >
+                    <span className="mono text-[11px] text-accent/70">{section.index}</span>
+                    <span className="display display-sm">{section.label}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          <a
+            href="https://github.com/saniddhya"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mono text-[11px] text-muted"
+          >
+            GitHub ↗
+          </a>
+        </div>
+      )}
     </>
   );
 }

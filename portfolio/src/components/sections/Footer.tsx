@@ -1,49 +1,35 @@
-"use client";
+import { profile } from "@/data/profile";
 
-import Link from "next/link";
-import { useSoundContext } from "@/components/audio/SoundProvider";
-
-export function Footer() {
-  const { playClick, playHover } = useSoundContext();
+export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="footer" aria-label="Footer">
-      <div className="container flex flex-col md:flex-row items-center justify-between gap-4">
-        <p className="font-mono text-xs text-muted">
-          © {year} Sanidhya Rathore. Built with React, Next.js & GSAP.
+    <footer className="no-print border-t border-line py-10">
+      <div className="container flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+        <p className="mono text-[10px] text-muted-2">
+          © {year} {profile.name}
         </p>
-        <div className="flex items-center gap-6">
-          <Link
-            href="/"
-            className="font-mono text-xs text-muted hover:text-accent transition-colors"
-            onClick={() => playClick()}
-            onMouseEnter={playHover}
-          >
-            Home
-          </Link>
-          <a
-            href="mailto:Rathorekuah@gmail.com"
-            className="font-mono text-xs text-muted hover:text-accent transition-colors"
-            onClick={() => playClick()}
-            onMouseEnter={playHover}
-          >
-            Email
-          </a>
+
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+          <span className="mono text-[10px] text-muted-2">{profile.site}</span>
           <a
             href="https://github.com/saniddhya"
             target="_blank"
             rel="noopener noreferrer"
-            className="font-mono text-xs text-muted hover:text-accent transition-colors"
-            onClick={() => playClick()}
-            onMouseEnter={playHover}
+            className="mono link-line text-[10px] text-muted-2"
           >
             GitHub
+          </a>
+          <a
+            href="https://www.linkedin.com/in/sanidhya-rathore-377a99226"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mono link-line text-[10px] text-muted-2"
+          >
+            LinkedIn
           </a>
         </div>
       </div>
     </footer>
   );
 }
-
-export default Footer;

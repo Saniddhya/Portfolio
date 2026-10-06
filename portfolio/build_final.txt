@@ -1,0 +1,41 @@
+
+> sanidhya-portfolio@1.0.0 build
+> next build
+
+   ▲ Next.js 15.5.23
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 10.6s
+   Linting and checking validity of types ...
+
+<--- Last few GCs --->
+
+[27580:0000025EED986000]    16152 ms: Scavenge 147.6 (221.4) -> 119.9 (238.1) MB, pooled: 0 MB, 31.67 / 0.00 ms  (average mu = 0.998, current mu = 0.997) task; 
+[27580:0000025EED986000]    17784 ms: Scavenge 177.9 (243.7) -> 138.4 (255.4) MB, pooled: 0 MB, 40.93 / 0.00 ms  (average mu = 0.998, current mu = 0.997) allocation failure; 
+
+FATAL ERROR: NewSpace::EnsureCurrentCapacity Allocation failed - JavaScript heap out of memory
+----- Native stack trace -----
+
+ 1: 00007FF6B0A3C36F 
+ 2: 00007FF6B1684D77 
+ 3: 00007FF6B1485467 
+ 4: 00007FF6B1445F03 
+ 5: 00007FF6B148786A 
+ 6: 00007FF6B1486E96 
+ 7: 00007FF6B1497E22 
+ 8: 00007FF6B149794B 
+ 9: 00007FF6B291DAED 
+10: 00007FF6B1482F30 
+11: 00007FF6B14A9696 
+12: 00007FF6B14C5502 
+13: 00007FF6B118BC60 
+14: 00007FF6B1669C8A 
+15: 00007FF6B166A391 
+16: 00007FF6B16002AE 
+17: 00007FF6B15FFBBD 
+18: 00007FF6B160064C 
+19: 00007FF6B1083DBB 
+20: 0000025EA7E7733A 
+Next.js build worker exited with code: 134 and signal: null
+DONE_0  

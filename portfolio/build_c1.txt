@@ -1,0 +1,32 @@
+
+> sanidhya-portfolio@1.0.0 build
+> next build
+
+   ▲ Next.js 15.5.23
+   - Environments: .env.local
+   - Experiments (use with caution):
+     · cpus: 1
+
+   Creating an optimized production build ...
+
+<--- Last few GCs --->
+
+[10232:000001A220276000]     9160 ms: Scavenge 132.7 (212.0) -> 95.1 (219.2) MB, pooled: 0 MB, 20.25 / 0.00 ms  (average mu = 0.993, current mu = 0.988) task; 
+
+FATAL ERROR: Zone Allocation failed - process out of memory
+----- Native stack trace -----
+
+ 1: 00007FF6B0A3C36F node::OnFatalError+1343
+ 2: 00007FF6B1684D77 v8::Function::NewInstance+423
+ 3: 00007FF6B0FFFBD6 v8::SnapshotCreator::GetIsolate+56566
+ 4: 00007FF6B2023EB0 v8::base::DiyFp::Multiply+40368
+ 5: 00007FF6B1E3D989 v8::internal::compiler::CompilationDependencies::FieldTypeDependencyOffTheRecord+107193
+ 6: 00007FF6B0EF7D96 X509_ACERT_get0_notBefore+1782
+ 7: 00007FF6B0ED568F SSL_CTX_get_client_CA_list+714495
+ 8: 00007FF6B1601023 X509_STORE_set_get_issuer+234979
+ 9: 00007FF6B16030FA X509_STORE_set_get_issuer+243386
+10: 00007FF6B1086271 v8::String::Utf8Value::~Utf8Value+181681
+11: 00007FF6B108436F v8::String::Utf8Value::~Utf8Value+173743
+12: 000001A25893733A 
+Next.js build worker exited with code: 134 and signal: null
+DONE_0  

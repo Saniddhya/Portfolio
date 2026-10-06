@@ -1,0 +1,8 @@
+   ▲ Next.js 15.5.23
+   - Environments: .env.local
+   - Experiments (use with caution):
+     · cpus: 1
+
+   Creating an optimized production build ...
+Next.js build worker exited with code: 3221226505 and signal: null
+DONE_0  

@@ -1,22 +1,86 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
+import { Geist, Geist_Mono, Inter } from "next/font/google";
 import Providers from "./provider";
+import { profile } from "@/data/profile";
 import "./globals.css";
 
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+const geistSans = Geist({
+  subsets: ["latin"],
+  variable: "--font-geist-sans",
+  display: "swap",
+});
+
+const geistMono = Geist_Mono({
+  subsets: ["latin"],
+  variable: "--font-geist-mono",
+  display: "swap",
+});
+
+const SITE_URL = "https://sanidhyadev.vercel.app";
+
 export const metadata: Metadata = {
-  title: "Sanidhya Rathore — Full-Stack Developer & Creative Technologist",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: `${profile.name} — AI Engineer & Builder`,
+    template: `%s — ${profile.name}`,
+  },
   description:
-    "Sanidhya Rathore — full-stack developer and creative technologist crafting motion-first experiences in React, Next.js, Python and WebGL.",
+    "Sanidhya Rathore is an AI engineer and full-stack builder creating intelligent products across AI, automation, finance and modern web systems.",
   keywords: [
-    "Full-stack developer",
-    "Creative technologist",
+    "Sanidhya Rathore",
+    "AI Engineer",
+    "Full-Stack Developer",
     "Next.js",
     "React",
     "Python",
     "FastAPI",
+    "AI Agents",
+    "RAG",
     "Portfolio",
   ],
+  authors: [{ name: profile.name, url: SITE_URL }],
+  creator: profile.name,
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    url: SITE_URL,
+    siteName: profile.name,
+    title: `${profile.name} — AI Engineer & Builder`,
+    description:
+      "Building intelligent products from idea to production. AI systems, full-stack engineering, and intelligent financial infrastructure.",
+    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: profile.name }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${profile.name} — AI Engineer & Builder`,
+    description: "Building intelligent products from idea to production.",
+    images: ["/opengraph-image"],
+  },
+  robots: { index: true, follow: true },
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en"><head><link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" /><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" /><meta name="theme-color" content="#080607" /></head><body><Providers>{children}</Providers></body></html>;
+export const viewport: Viewport = {
+  themeColor: "#0a0a0b",
+  colorScheme: "dark",
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
+  return (
+    <html lang="en" className={`${inter.variable} ${geistSans.variable} ${geistMono.variable}`}>
+      <body>
+        <Providers>{children}</Providers>
+      </body>
+    </html>
+  );
 }

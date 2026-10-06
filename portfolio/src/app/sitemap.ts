@@ -1,41 +1,21 @@
 import type { MetadataRoute } from "next";
 import { projects } from "@/data/projects";
 
+const BASE_URL = "https://sanidhyadev.vercel.app";
+
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://sanidhya.dev";
-
-  const projectRoutes = projects.map((project) => ({
-    url: `${baseUrl}/work/${project.slug}`,
-    lastModified: new Date(),
-    changeFrequency: "monthly" as const,
-    priority: 0.8,
-  }));
-
   return [
     {
-      url: baseUrl,
+      url: BASE_URL,
       lastModified: new Date(),
-      changeFrequency: "monthly" as const,
+      changeFrequency: "monthly",
       priority: 1,
     },
-    {
-      url: `${baseUrl}/work`,
+    ...projects.map((project) => ({
+      url: `${BASE_URL}/projects/${project.slug}`,
       lastModified: new Date(),
       changeFrequency: "monthly" as const,
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/about`,
-      lastModified: new Date(),
-      changeFrequency: "monthly" as const,
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/contact`,
-      lastModified: new Date(),
-      changeFrequency: "monthly" as const,
-      priority: 0.7,
-    },
-    ...projectRoutes,
+      priority: 0.8,
+    })),
   ];
 }

@@ -1,69 +1,54 @@
-"use client";
+import { capabilities } from "@/data/capabilities";
 
-import { useEffect, useRef } from "react";
-import { gsap } from "@/lib/gsap";
-import { Eyebrow } from "@/components/ui/Eyebrow";
-import { skillCategories } from "@/data/skills";
-
-export function Capabilities() {
-  const sectionRef = useRef<HTMLElement | null>(null);
-
-  useEffect(() => {
-    const section = sectionRef.current;
-    if (!section) return;
-
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        ".capability-card",
-        { y: 40, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.8,
-          stagger: 0.15,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: section,
-            start: "top 70%",
-          },
-        },
-      );
-    }, section);
-
-    return () => ctx.revert();
-  }, []);
-
+/**
+ * What I build.
+ *
+ * Four capability groups with their underlying technologies. No skill
+ * percentages — technical maturity is better evidenced by the work itself than
+ * by an invented number.
+ */
+export default function Capabilities() {
   return (
-    <section
-      ref={sectionRef}
-      id="stack"
-      data-section="stack"
-      className="section"
-      aria-label="Capabilities"
-    >
+    <section className="section" aria-labelledby="capabilities-heading">
       <div className="container">
-        <div className="mb-12">
-          <Eyebrow>Capabilities</Eyebrow>
-          <h2 className="font-display text-3xl md:text-4xl xl:text-5xl font-semibold tracking-[-0.02em] mt-4">
-            What I work with
+        <div className="section-head">
+          <h2 id="capabilities-heading" className="display display-lg">
+            What I build.
           </h2>
+          <p className="lede max-w-[46ch]">
+            Four areas where the work overlaps — which is the point. A system that
+            spans more than one of these is where the real engineering lives.
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {skillCategories.map((category) => (
-            <div key={category.title} className="capability-card">
-              <h3 className="capability-card-title">{category.title}</h3>
-              <ul className="capability-list">
-                {category.skills.map((skill) => (
-                  <li key={skill}>{skill}</li>
+        <div className="grid gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-2">
+          {capabilities.map((group) => (
+            <article
+              key={group.index}
+              className="reveal group relative bg-panel p-8 transition-colors duration-500 hover:bg-bg-raise sm:p-10"
+            >
+              <span className="mono text-[11px] text-accent/70">{group.index}</span>
+
+              <h3 className="display display-sm mt-5 transition-transform duration-500 group-hover:translate-x-1">
+                {group.title}
+              </h3>
+
+              <p className="body-text mt-4 max-w-[40ch]">{group.summary}</p>
+
+              <ul className="mt-7 flex flex-wrap gap-2">
+                {group.items.map((item) => (
+                  <li
+                    key={item}
+                    className="mono border border-line px-3 py-1.5 text-[10px] text-muted transition-colors duration-300 group-hover:border-line-strong group-hover:text-fg"
+                  >
+                    {item}
+                  </li>
                 ))}
               </ul>
-            </div>
+            </article>
           ))}
         </div>
       </div>
     </section>
   );
 }
-
-export default Capabilities;
