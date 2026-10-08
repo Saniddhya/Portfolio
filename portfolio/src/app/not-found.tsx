@@ -1,20 +1,31 @@
 import Link from "next/link";
+import Footer from "@/components/sections/Footer";
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="text-center px-6">
-        <p className="font-mono text-sm text-accent mb-4">404 — Not Found</p>
-        <h1 className="font-display text-5xl md:text-6xl font-semibold mb-6">
-          Page not found
-        </h1>
-        <p className="text-muted mb-8">
-          The page you're looking for doesn't exist or has been moved.
-        </p>
-        <Link href="/" className="btn primary">
-          Back to Home
-        </Link>
-      </div>
-    </div>
+    <>
+      <main id="main" className="flex min-h-[80svh] items-center pt-32">
+        <div className="container">
+          <p className="mono text-[11px] text-accent/70">404 — Not found</p>
+
+          <h1 className="display display-lg mt-7">This page doesn&rsquo;t exist.</h1>
+
+          <p className="lede mt-6 max-w-[44ch]">
+            The link may be out of date, or the page may have moved.
+          </p>
+
+          <div className="mt-10">
+            <Link href="/" className="btn btn-primary">
+              Back to home
+              <span className="btn-arrow" aria-hidden="true">
+                →
+              </span>
+            </Link>
+          </div>
+        </div>
+      </main>
+
+      <Footer />
+    </>
   );
 }

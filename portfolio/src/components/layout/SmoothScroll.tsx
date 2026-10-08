@@ -1,61 +1,40 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import type { ReactNode } from "react";
+import { useEffect } from "react";
 import Lenis from "lenis";
-import { gsap, ScrollTrigger } from "@/lib/gsap";
-import { setLenis } from "@/lib/lenis";
-import { prefersReducedMotion } from "@/lib/utils";
 
-export default function SmoothScroll({ children }: { children: ReactNode }) {
-  const lenisRef = useRef<Lenis | null>(null);
-
+/**
+ * Smooth scrolling.
+ *
+ * Deliberately opt-out: it is skipped entirely under reduced motion, on touch
+ * devices (where it fights native momentum and hurts accessibility), and if the
+ * library fails to initialise. Normal browser scrolling always remains valid.
+ */
+export default function SmoothScroll({ children }: { children: React.ReactNode }) {
   useEffect(() => {
-    if (prefersReducedMotion()) return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const coarse = window.matchMedia("(pointer: coarse)").matches;
 
-    const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothWheel: true,
-    });
+    if (reduced || coarse) return;
 
-    lenisRef.current = lenis;
-    setLenis(lenis);
+    let lenis: Lenis | null = null;
+    let frame = 0;
 
-    lenis.on("scroll", () => {
-      ScrollTrigger.update();
-    });
+    try {
+      lenis = new Lenis({ duration: 1.05, smoothWheel: true });
+    } catch {
+      return;
+    }
 
     const raf = (time: number) => {
-      lenis.raf(time * 1000);
+      lenis?.raf(time);
+      frame = requestAnimationFrame(raf);
     };
-
-    gsap.ticker.add(raf);
-    gsap.ticker.lagSmoothing(0);
-
-    // Sync ScrollTrigger with Lenis
-    ScrollTrigger.scrollerProxy(document.body, {
-      scrollTop(value?: number) {
-        if (typeof value === "number") {
-          lenis.scrollTo(value, { immediate: true });
-        }
-        return lenis.scroll;
-      },
-      getBoundingClientRect() {
-        return {
-          top: 0,
-          left: 0,
-          width: window.innerWidth,
-          height: window.innerHeight,
-        };
-      },
-    });
+    frame = requestAnimationFrame(raf);
 
     return () => {
-      gsap.ticker.remove(raf);
-      lenis.destroy();
-      lenisRef.current = null;
-      setLenis(null);
+      if (frame) cancelAnimationFrame(frame);
+      lenis?.destroy();
     };
   }, []);
 

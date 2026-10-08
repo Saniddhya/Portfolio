@@ -1,21 +1,30 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import type { ReactNode } from "react";
-import { SoundProvider } from "@/components/audio/SoundProvider";
 import CustomCursor from "@/components/cursor/CustomCursor";
-import Preloader from "@/components/layout/Preloader";
-import SmoothScroll from "@/components/layout/SmoothScroll";
 import Navbar from "@/components/navigation/Navbar";
-const MotionBackground = dynamic(
-  () => import("@/components/background/MotionBackground"),
-  { ssr: false },
-);
+import RevealProvider from "@/components/layout/RevealProvider";
+import SmoothScroll from "@/components/layout/SmoothScroll";
 
-export default function Providers({
-  children,
-}: {
-  children: ReactNode;
-}) {
-  return <SoundProvider><Preloader /><CustomCursor /><Navbar /><MotionBackground /><SmoothScroll>{children}</SmoothScroll></SoundProvider>;
+/**
+ * Global client shell.
+ *
+ * Intentionally small — no audio, no background canvas, no forced preloader.
+ * Each was a tax on first paint and none carried information the visitor needs.
+ */
+export default function Providers({ children }: { children: ReactNode }) {
+  return (
+    <SmoothScroll>
+      <RevealProvider />
+      <CustomCursor />
+      <Navbar />
+      <a
+        href="#main"
+        className="mono sr-only-focusable absolute left-4 top-4 z-[110] rounded bg-accent px-4 py-2 text-[11px] text-bg"
+      >
+        Skip to content
+      </a>
+      {children}
+    </SmoothScroll>
+  );
 }

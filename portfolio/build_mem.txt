@@ -1,0 +1,39 @@
+
+> sanidhya-portfolio@1.0.0 build
+> next build
+
+   ▲ Next.js 15.5.23
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 8.4s
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/11) ...
+
+<--- Last few GCs --->
+
+[24512:000001D34A576000]     3672 ms: Mark-Compact (reduce) 19.7 (22.7) -> 19.7 (22.2) MB, pooled: 0 MB, 28.68 / 0.00 ms  (average mu = 0.948, current mu = 0.003) low memory notification; GC in old space requested
+[24512:000001D34A576000]     3965 ms: Mark-Compact 22.5 (24.3) -> 22.0 (25.6) MB, pooled: 0 MB, 68.46 / 0.00 ms  (average mu = 0.878, current mu = 0.766) external memory pressure; GC in old space requested
+
+FATAL ERROR: Committing semi space failed. Allocation failed - JavaScript heap out of memory
+----- Native stack trace -----
+
+ 1: 00007FF6B0A3C36F 
+ 2: 00007FF6B1684D77 
+ 3: 00007FF6B1485467 
+ 4: 00007FF6B141DE8B 
+ 5: 00007FF6B14461FA 
+ 6: 00007FF6B1487846 
+ 7: 00007FF6B1486E96 
+ 8: 00007FF6B1497E22 
+ 9: 00007FF6B149794B 
+10: 00007FF6B291DAED 
+11: 00007FF6B1482F30 
+12: 00007FF6B148AE88 
+13: 00007FF6B1301A84 
+14: 00007FF6B16AC78E 
+15: 00007FF6B0A7D095 
+16: 000001D31FDCF64D 
+ ⨯ Next.js build worker exited with code: 134 and signal: null
+DONE_0  

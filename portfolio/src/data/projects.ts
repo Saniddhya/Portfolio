@@ -1,102 +1,172 @@
+export type ProjectStatus = "DEPLOYED" | "PROTOTYPE" | "EXPERIMENT";
+
 export interface Project {
-  id: string;
-  title: string;
+  /** URL-safe identifier used for /projects/[slug]. */
+  slug: string;
+  name: string;
+  /** One-line summary. Kept honest — no traction or scale claims. */
+  tagline: string;
+  category: string;
+  year: number;
+  status: ProjectStatus;
   description: string;
   technologies: string[];
-  previewLabel: string;
-  slug: string;
-  problem?: string;
-  solution?: string;
-  architecture?: string[];
-  screenshots?: string[];
-  results?: string[];
+  /** Rendered as the animated flow diagram on the detail page. */
+  pipeline: string[];
+  problem: string;
+  approach: string;
+  architecture: string[];
+  role: string;
+  github: string;
   liveDemo?: string;
-  github?: string;
+  /** Flags a project for the oversized case-study treatment. */
+  featured: boolean;
+  /** Higher sorts first. */
+  priority: number;
 }
 
+/**
+ * Curated project context.
+ *
+ * Every claim here was read directly from the public repository or its README.
+ * Where a repo has no description, README, or demo, the field is omitted rather
+ * than invented. Live GitHub data is merged on top at request time — see
+ * lib/projects.ts.
+ */
 export const projects: Project[] = [
   {
-    id: "01",
-    title: "CRM Platform",
+    slug: "aptino",
+    name: "Aptino",
+    tagline: "An evidence-grounded claim decision engine for health insurance.",
+    category: "AI Systems · Retrieval · Decision Support",
+    year: 2026,
+    status: "DEPLOYED",
     description:
-      "A full-stack customer relationship management platform with role-based access control, real-time reporting, and automated workflows.",
-    technologies: ["React", "Next.js", "TypeScript", "FastAPI", "PostgreSQL"],
-    previewLabel: "CRM Platform",
-    slug: "crm-platform",
-    problem:
-      "Businesses needed a unified system to manage customer interactions, track deals, and generate reports without juggling multiple disconnected tools.",
-    solution:
-      "Built a modular CRM with a modern React frontend and a FastAPI REST backend, featuring role-based dashboards, pipeline management, and automated reporting.",
-    architecture: [
-      "Next.js App Router frontend with TypeScript",
-      "FastAPI REST API with JWT authentication",
-      "PostgreSQL database with SQLAlchemy ORM",
-      "Docker containerization for consistent deployment",
+      "A multi-agent investigation platform that maps health-insurance claim facts to policy requirements through a structured evidence matrix, so every decision is grounded in retrieved policy text.",
+    technologies: [
+      "Python",
+      "FastAPI",
+      "Streamlit",
+      "Hybrid Retrieval",
+      "BM25",
+      "RRF",
+      "Reranking",
+      "Docker",
+      "LLM Agents",
     ],
-    liveDemo: "https://github.com/saniddhya",
-    github: "https://github.com/saniddhya",
+    pipeline: ["Claim", "Policy", "Evidence", "Reasoning", "Decision", "Citation"],
+    problem:
+      "Claim adjudication depends on reading a large policy document and matching each fact in a claim to the clause that governs it. Doing that by hand is slow, and a summary that loses its citations cannot be defended in an audit.",
+    approach:
+      "Treat the system as investigation rather than prediction. Agents normalise the claim, plan what evidence is missing, retrieve the governing clauses, build an explicit evidence matrix, then reason over it under a fail-closed rule: when evidence is missing or conflicting, the system abstains and returns NEEDS_REVIEW instead of guessing.",
+    architecture: [
+      "Case Analysis Agent normalises facts and flags conflicts and missing evidence",
+      "Hybrid retrieval: dense vectors and BM25 fused with Reciprocal Rank Fusion",
+      "Post-fusion reranker narrows to high-precision policy chunks",
+      "Policy Evidence Agent builds the evidence matrix with typed findings",
+      "Decision Agent applies a safety hierarchy: Missing → Exclusion → Limits → Admissible",
+      "Validation Agent checks every material claim against a retrieved citation",
+      "FastAPI endpoints (/analyze, /review, /health) behind a Streamlit reviewer workspace",
+      "Full provenance chain recorded as audit events for every analysis",
+    ],
+    role:
+      "Built end to end — multi-agent orchestration, retrieval pipeline, evidence and decision modelling, API layer, reviewer UI, evaluation harness, and documentation.",
+    github: "https://github.com/Saniddhya/Aptino-AI-Engineer-Health-insurance-",
+    liveDemo: "https://aptionohealth.streamlit.app/",
+    featured: true,
+    priority: 100,
   },
   {
-    id: "02",
-    title: "Lock Module",
+    slug: "vishwakarma-arts",
+    name: "Vishwakarma Arts",
+    tagline: "A deployed React web application.",
+    category: "Full-Stack Application",
+    year: 2026,
+    status: "DEPLOYED",
     description:
-      "A secure authentication and access-control system with JWT-based sessions, role-based permissions, and audit logging.",
-    technologies: ["TypeScript", "FastAPI", "PostgreSQL", "Docker", "REST APIs"],
-    previewLabel: "Lock Module",
-    slug: "lock-module",
+      "A JavaScript web application built with React and Vite, deployed publicly on Vercel. The source is open; the specific product surface is best read from the live application.",
+    technologies: ["JavaScript", "React", "Vite", "Vercel"],
+    pipeline: ["Interface", "Application", "Data", "Deployment"],
     problem:
-      "Applications required a repeatable, secure authentication layer with fine-grained permission control and full audit trails.",
-    solution:
-      "Designed a reusable locks-and-permissions module with JWT authentication, role-based access control, and comprehensive audit logging.",
+      "Kept as evidence of shipping a real web application to production rather than leaving it as a local prototype.",
+    approach:
+      "Built as a Vite + React application and deployed to Vercel, so the result is publicly reachable and verifiable rather than a screenshot.",
     architecture: [
-      "JWT token-based authentication flow",
-      "Role-based access control middleware",
-      "PostgreSQL for user and permission storage",
-      "Docker for isolated service deployment",
+      "React application built with Vite",
+      "Deployed to Vercel with continuous deployment from the main branch",
     ],
-    liveDemo: "https://github.com/saniddhya",
-    github: "https://github.com/saniddhya",
+    role: "Built and deployed the application.",
+    github: "https://github.com/Saniddhya/Vishwakarma-Arts",
+    liveDemo: "https://vishwakarma-arts.vercel.app",
+    featured: false,
+    priority: 60,
   },
   {
-    id: "03",
-    title: "Crop Advisor",
+    slug: "portfolio",
+    name: "Portfolio",
+    tagline: "This site — an interactive engineering demonstration.",
+    category: "Product Engineering · Creative Web",
+    year: 2026,
+    status: "DEPLOYED",
     description:
-      "A data-driven advisory system that helps farmers make informed decisions using weather data, soil metrics, and crop recommendations.",
-    technologies: ["Python", "FastAPI", "PostgreSQL", "React", "REST APIs"],
-    previewLabel: "Crop Advisor",
-    slug: "crop-advisor",
-    problem:
-      "Farmers lacked access to actionable, data-backed guidance for crop selection and management decisions.",
-    solution:
-      "Created a crop advisory platform that ingests weather and soil data, applies recommendation logic, and delivers clear guidance through a simple interface.",
-    architecture: [
-      "Python data processing pipeline",
-      "FastAPI backend serving recommendation endpoints",
-      "PostgreSQL storing regional and crop data",
-      "React frontend for advisory dashboards",
+      "The portfolio itself: a Next.js application with a WebGL intelligence visualisation, a GitHub-derived project pipeline, scroll-driven motion, and a restrained editorial design system.",
+    technologies: [
+      "Next.js",
+      "React",
+      "TypeScript",
+      "Three.js",
+      "React Three Fiber",
+      "GSAP",
+      "Tailwind CSS",
+      "Vercel",
     ],
-    liveDemo: "https://github.com/saniddhya",
-    github: "https://github.com/saniddhya",
+    pipeline: ["Data", "Server", "Interface", "Motion", "Deployment"],
+    problem:
+      "Most engineering portfolios assert capability. This one is meant to be the evidence — the site itself demonstrates how the person it represents builds.",
+    approach:
+      "Server-render the content, dynamically import WebGL so it never blocks first paint, drive project data from the public GitHub API with a curated metadata layer on top, and degrade gracefully when WebGL or motion is unavailable.",
+    architecture: [
+      "Next.js App Router with server components for all content",
+      "WebGL scene dynamically imported and paused when outside the viewport",
+      "GitHub project pipeline merged with curated metadata, cached server-side",
+      "Reduced-motion and no-WebGL fallbacks for every animated subsystem",
+    ],
+    role: "Design, engineering, 3D, motion, and deployment.",
+    github: "https://github.com/Saniddhya/Portfolio",
+    liveDemo: "https://sanidhyadev.vercel.app",
+    featured: false,
+    priority: 55,
   },
   {
-    id: "04",
-    title: "Data Studies",
+    slug: "itune-music-sales-analysis",
+    name: "iTunes Music Sales Analysis",
+    tagline: "A data analysis study over a public sales dataset.",
+    category: "Data & Analysis",
+    year: 2026,
+    status: "EXPERIMENT",
     description:
-      "A collection of data analysis and visualization studies exploring patterns, trends, and insights across real-world datasets.",
-    technologies: ["Python", "Pandas", "Matplotlib", "PostgreSQL"],
-    previewLabel: "Data Studies",
-    slug: "data-studies",
+      "An analysis study built on a public music-sales dataset, exploring structure and trends in the data.",
+    technologies: ["Python", "Data Analysis"],
+    pipeline: ["Dataset", "Cleaning", "Analysis"],
     problem:
-      "Raw datasets held valuable insights that were difficult to surface without structured analysis and clear visualizations.",
-    solution:
-      "Performed systematic data studies using Python data tools, producing documented analyses and visualizations that reveal meaningful patterns.",
+      "Working through a real dataset to build intuition for cleaning messy data and extracting signal.",
+    approach:
+      "Load and clean the dataset, then work through exploratory analysis to surface patterns.",
     architecture: [
-      "Pandas for data cleaning and transformation",
-      "Matplotlib for visualization",
-      "PostgreSQL for storing processed datasets",
-      "Jupyter-style analysis documentation",
+      "Dataset loaded and cleaned for missing and inconsistent values",
+      "Exploratory analysis to surface trends and structure",
     ],
-    liveDemo: "https://github.com/saniddhya",
-    github: "https://github.com/saniddhya",
+    role: "Data analysis and study.",
+    github: "https://github.com/Saniddhya/ITUNE-MUSIC-SALES-DA",
+    featured: false,
+    priority: 30,
   },
 ];
+
+export function getProject(slug: string): Project | undefined {
+  return projects.find((p) => p.slug === slug);
+}
+
+export function getFeaturedProject(): Project {
+  return projects.find((p) => p.featured) ?? projects[0];
+}
