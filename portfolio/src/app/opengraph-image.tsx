@@ -34,6 +34,8 @@ export default async function OpenGraphImage() {
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div
             style={{
+              display: "flex",
+              flexDirection: "column",
               color: "#f2efe9",
               fontSize: 92,
               fontWeight: 600,
@@ -41,9 +43,8 @@ export default async function OpenGraphImage() {
               lineHeight: 1.05,
             }}
           >
-            Building intelligence
-            <br />
-            into products.
+            <span>Building intelligence</span>
+            <span>into products.</span>
           </div>
 
           <div style={{ color: "#a3a09a", fontSize: 28, marginTop: 28 }}>

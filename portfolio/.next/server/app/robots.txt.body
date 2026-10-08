@@ -1,0 +1,5 @@
+User-Agent: *
+Allow: /
+
+Host: https://sanidhyadev.vercel.app
+Sitemap: https://sanidhyadev.vercel.app/sitemap.xml
